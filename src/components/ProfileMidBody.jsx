@@ -1,9 +1,9 @@
 import { Button, Col, Image, Nav, Row, Spinner } from "react-bootstrap"
 import ProfilePostCard from "./ProfilePostCard"
-import { useEffect } from "react"
-import { jwtDecode } from "jwt-decode";
+import { useContext, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPostsByUser } from "../features/posts/postsSlice";
+import { AuthContext } from "./AuthProvider";
 
 export default function ProfileMidBody () {
     const url = "https://pbs.twimg.com/profile_banners/83072625/1602845571/1500x500"
@@ -12,17 +12,12 @@ export default function ProfileMidBody () {
     const dispatch = useDispatch();
     const posts = useSelector((state) => state.posts.posts);
     const loading = useSelector((state) => state.posts.loading);
+    const { currentUser } = useContext(AuthContext);
 
-    
+    useEffect(() => {
+        dispatch(fetchPostsByUser(currentUser.uid));
+    }, [dispatch, currentUser]);
 
-    useEffect(()=> {
-        const token = localStorage.getItem("authToken");
-        if(token) {
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.id;
-            dispatch(fetchPostsByUser(userId));
-        }
-    }, [dispatch]);
 
     return (
         <Col sm={6} className="bg-light" style={{ border: "1px solid lightgrey"}}>
@@ -84,7 +79,7 @@ export default function ProfileMidBody () {
             )}
             {/* check if posts has data before render .map function  */}
             {posts.length > 0 && posts.map((post) => (
-                <ProfilePostCard key={post.id} content={post.content} postId={post.id} />
+                <ProfilePostCard key={post.id} post={post} />
             ))}
         </Col>
     )
