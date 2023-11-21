@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import ProfileSideBar from "../components/ProfileSideBar";
@@ -12,16 +12,13 @@ export default function ProfilePage() {
     const { currentUser } = useContext(AuthContext);
 
     //check if no token
-    useEffect(() => {
-        if(!currentUser) {
-            navigate("/login");
-        }
-    }, [currentUser, navigate]);
-
-
-  const handleLogout = () => {
-    auth.signOut();
-  };
+      if(!currentUser) {
+          navigate("/login");
+      }
+   
+    const handleLogout = () => {
+      auth.signOut();
+    };
 
   return (
     <>
